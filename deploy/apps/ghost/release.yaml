@@ -23,6 +23,10 @@ spec:
       hostname: gmarcha.com
       path: /blog
       tls: true
+    extraEnvVars:
+      - name: DEBUG
+        value: '*'
+    allowEmptyPassword: false
     existingSecret: ghost
     ghostUsername: admin
     ghostPassword: password
