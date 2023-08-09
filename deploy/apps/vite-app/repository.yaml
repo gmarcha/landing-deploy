@@ -1,0 +1,13 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: vite-app
+  namespace: vite-app
+spec:
+  interval: 5m0s
+  url: https://github.com/gmarcha/vite-app
+  ref:
+    branch: master
+  secretRef:
+    name: ghr
