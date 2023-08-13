@@ -52,7 +52,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./deploy/apps
+  path: ./deploy/apps/production
   prune: true
   wait: true
   timeout: 10m0s
