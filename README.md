@@ -1,3 +1,3 @@
 # landing-deploy
 
-An infrastructure deployment with Terraform, Ansible and Kubernetes following GitOps practices.
+An infrastructure deployment with Terraform, Ansible and self-deployed Kubernetes following GitOps practices.
