@@ -1,0 +1,24 @@
+---
+
+- name: Run prerequesites tasks
+  import_tasks: prereq.yaml
+
+
+- name: Copy K3s configuration file
+  template:
+    src: config.yaml.j2
+    dest: /etc/rancher/k3s/config.yaml
+    mode: 0644
+
+- name: Copy K3s service file
+  template:
+    src: k3s.service.j2
+    dest: /etc/systemd/system/k3s.service
+    mode: 0644
+
+- name: Enable and start K3s service
+  systemd:
+    name: k3s
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

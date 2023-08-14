@@ -1,0 +1,34 @@
+---
+
+- name: Set SELinux to disabled state
+  selinux:
+    state: disabled
+  when: ansible_facts['os_family']|lower == 'redhat'
+
+- name: Enable IPv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    reload: yes
+
+- name: Enable IPv6 forwarding
+  sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: "1"
+    state: present
+    reload: yes
+  when: ansible_all_ipv6_addresses
+
+- name: Add br_netfilter to /etc/modules-load.d/
+  copy:
+    content: "br_netfilter"
+    dest: /etc/modules-load.d/br_netfilter.conf
+    mode: "u=rw,g=,o="
+  when: ansible_facts['os_family']|lower == 'redhat'
+
+- name: Load br_netfilter
+  modprobe:
+    name: br_netfilter
+    state: present
+  when: ansible_facts['os_family']|lower == 'redhat'
