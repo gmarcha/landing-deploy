@@ -1,0 +1,4 @@
+repository_url: https://github.com/gmarcha/landing-deploy.git
+repository_password: git_pat_token_read_write
+repository_branch: master
+repository_path: /deploy/clusters/production

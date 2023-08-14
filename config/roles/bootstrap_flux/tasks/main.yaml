@@ -1,0 +1,13 @@
+---
+
+- name: Run Flux bootstrap
+  command: |-
+    /usr/local/bin/flux bootstrap git -s \
+      --url={{ repository_url }} \
+      --branch={{ repository_branch }} \
+      --path={{ repository_path }} \
+      --components-extra=image-reflector-controller,image-automation-controller \
+      --token-auth
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+    GIT_PASSWORD: "{{ repository_password }}"
