@@ -1,0 +1,51 @@
+---
+
+- name: Create container registry and git repository secrets in flux-system namespace
+  block:
+    - name: Create namespace flux-system
+      shell: |-
+        /usr/local/bin/k3s kubectl create ns flux-system --dry-run=client -o yaml |
+          /usr/local/bin/k3s kubectl apply -f-
+    - name: Create docker-registry secret ghcr in flux-system namespace
+      shell: |-
+        /usr/local/bin/k3s kubectl -n flux-system create secret docker-registry ghcr \
+          --docker-server=ghcr.io \
+          --docker-username="{{ vite_registry_user }}" \
+          --docker-password="{{ vite_registry_password }}" \
+          --docker-email="{{ vite_registry_email }}" \
+          --dry-run=client -o yaml |
+          /usr/local/bin/k3s kubectl apply -f-
+    - name: Create generic secret ghr in flux-system namespace
+      shell: |-
+        /usr/local/bin/k3s kubectl -n flux-system create secret generic ghr \
+          --from-literal=username="{{ vite_repository_user }}" \
+          --from-literal=password="{{ vite_repository_password }}" \
+          --dry-run=client -o yaml |
+          /usr/local/bin/k3s kubectl apply -f-
+
+- name: Create container registry secret in vite-app namespace
+  block:
+    - name: Create namespace vite-app
+      shell: /usr/local/bin/k3s kubectl create ns vite-app --dry-run=client -o yaml | /usr/local/bin/k3s kubectl apply -f -
+    - name: Create docker-registry secret ghcr in vite-app namespace
+      shell: |-
+        /usr/local/bin/k3s kubectl -n vite-app create secret docker-registry ghcr \
+          --docker-server=ghcr.io \
+          --docker-username="{{ vite_registry_user }}" \
+          --docker-password="{{ vite_registry_password }}" \
+          --docker-email="{{ vite_registry_email }}" \
+          --dry-run=client -o yaml |
+          /usr/local/bin/k3s kubectl apply -f-
+
+- name: Create application credentials secret in ghost namespace
+  block:
+    - name: Create namespace ghost
+      shell: |-
+        /usr/local/bin/k3s kubectl create ns ghost --dry-run=client -o yaml |
+          /usr/local/bin/k3s kubectl apply -f-
+    - name: Create generic secret ghost in ghost namespace
+      shell: |-
+        /usr/local/bin/k3s kubectl -n ghost create secret generic ghost \
+          --from-literal=ghost-password="{{ ghost_password }}" \
+          --dry-run=client -o yaml |
+          /usr/local/bin/k3s kubectl apply -f-

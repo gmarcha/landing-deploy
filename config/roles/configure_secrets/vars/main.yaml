@@ -1,0 +1,6 @@
+vite_repository_user: "gmarcha"
+vite_repository_password: "password"
+vite_registry_user: "gmarcha"
+vite_registry_password: "password"
+vite_registry_email: "gmarcha@github.com"
+ghost_password: "password"
