@@ -1,0 +1,8 @@
+k3s_token: token
+k3s_tls_san: gmarcha.com
+k3s_primary_ip: 127.0.0.1
+
+repository_password: "password"
+vite_repository_password: "password"
+vite_registry_password: "password"
+ghost_password: "password"
