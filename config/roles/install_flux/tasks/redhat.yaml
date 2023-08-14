@@ -1,0 +1,7 @@
+---
+
+- name: Create shasum symlink
+  file:
+    src: /usr/bin/sha1sum
+    dest: /usr/bin/shasum
+    state: link

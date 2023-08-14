@@ -1,0 +1,29 @@
+---
+
+- name: Ensure release version and archive name are defined
+  set_fact:
+    flux_release: "v{{ flux_version }}"
+    flux_archive: "flux_{{ flux_version }}_{{ flux_arch }}.tar.gz"
+
+- name: Ensure release download url and destination path are defined
+  set_fact:
+    flux_release_url: "{{ flux_url }}/{{ flux_release }}/{{ flux_archive }}"
+    flux_archive_dir: "{{ flux_src_dir }}/{{ flux_archive }}"
+
+- name: "Download FluxCD archive into {{ flux_src_dir }}"
+  get_url:
+    url: "{{ flux_release_url }}"
+    dest: "{{ flux_src_dir }}"
+  register: flux_download
+
+- name: "Unarchive FluxCD binary into {{ flux_bin_dir }}"
+  unarchive:
+    remote_src: true
+    src: "{{ flux_archive_dir }}"
+    dest: "{{ flux_bin_dir }}"
+    mode: 0755
+  when: flux_download.changed
+
+- name: Configure Redhat based distributions
+  import_tasks: redhat.yaml
+  when: ansible_facts['os_family']|lower == 'redhat'
