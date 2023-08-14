@@ -1,0 +1,24 @@
+---
+
+- name: Install dependencies
+  hosts: all
+  roles:
+    - install_k3s
+    - install_flux
+
+- name: Run K3s service
+  hosts: all
+  roles:
+    - role: run_k3s
+      vars:
+        k3s_cluster_init: true
+
+- name: Bootstrap flux
+  hosts: all
+  roles:
+    - bootstrap_flux
+
+- name: Configure secrets
+  hosts: all
+  roles:
+    - configure_secrets
