@@ -1,0 +1,47 @@
+---
+
+- name: Ensure release version is defined
+  set_fact:
+    k3s_release: "v{{ k3s_version }}+{{ k3s_build }}"
+    k3s_bin: k3s
+    kubectl_bin: kubectl
+    crictl_bin: crictl
+
+- name: Ensure release download url and destination path are defined
+  set_fact:
+    k3s_release_url: "{{ k3s_url }}/{{ k3s_release }}/{{ k3s_bin }}"
+    k3s_bin_path: "{{ k3s_bin_dir }}/{{ k3s_bin }}"
+    kubectl_bin_path: "{{ k3s_bin_dir }}/{{ kubectl_bin }}"
+    crictl_bin_path: "{{ k3s_bin_dir }}/{{ crictl_bin }}"
+
+- name: Download K3S
+  get_url:
+    url: "{{ k3s_release_url }}"
+    dest: "{{ k3s_bin_dir }}"
+    mode: 0755
+
+- name: Create kubectl symlink when kubectl binary does not exist
+  block:
+    - name: Check if kubectl binary exists
+      stat:
+        path: "{{ kubectl_bin_path }}"
+      register: kubectl_binary
+    - name: Create kubectl symlink
+      file:
+        src: "{{ k3s_bin_path }}"
+        dest: "{{ kubectl_bin_path }}"
+        state: link
+      when: not kubectl_binary.stat.exists
+
+- name: Create crictl symlink when crictl binary does not exist
+  block:
+    - name: Check if crictl binary exists
+      stat:
+        path: "{{ crictl_bin_path }}"
+      register: crictl_binary
+    - name: Create crictl symlink
+      file:
+        src: "{{ k3s_bin_path }}"
+        dest: "{{ crictl_bin_path }}"
+        state: link
+      when: not crictl_binary.stat.exists

@@ -1,0 +1,4 @@
+k3s_version: 1.25.12
+k3s_arch: ""
+k3s_build: "k3s1"
+k3s_url: "https://github.com/k3s-io/k3s/releases/download"
