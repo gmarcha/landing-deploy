@@ -9,6 +9,10 @@ An infrastructure deployment with Terraform, Ansible and self-deployed Kubernete
 [![K3s](https://img.shields.io/badge/k3s-%23323330.svg?style=for-the-badge&logo=k3s&logoColor=%23ffc71c)](https://docs.k3s.io/)
 [![FluxCD](https://img.shields.io/badge/FluxCD-%23316ce4.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://fluxcd.io/flux/)
 
+## Example
+
+[![Infrastructure diagram](.github/assets/gcp-vm.png)](https://github.com/gmarcha/landing-deploy)
+
 ## Requirements
 
 - `terraform`[^1],
