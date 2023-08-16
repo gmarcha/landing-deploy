@@ -143,7 +143,7 @@ FluxCD is a Kubernetes GitOps tool which ensures continuous deployment of applic
 ## Roadmap
 
 - Add managed instance group (MIG) for server nodes and agent nodes.
-- Interactive UI to configure repository (Terraform and Ansible configuration files).
+- Interactive CLI to configure repository (Terraform and Ansible configuration files).
 
 ## Author
 
