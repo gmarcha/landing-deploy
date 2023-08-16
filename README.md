@@ -71,7 +71,7 @@ Flux kustomize and helm controllers are in charge to reconcile flux kustomize an
 
 ### Scale k3s from single-node cluster to multi-node cluster
 
-Single-node k3s cluster are production ready but load balancing should be configured properly at each system level to ensure good quality of service for multi-nodes cluster.
+Single-node k3s cluster are production ready but load balancing should be configured properly at each system level to ensure good quality of service for multi-nodes cluster (thus achieving true high-availability).
 
 K3s is shipped with an internal load balancer implementation. It is perfectly suitable for single-node usage but it should be avoided for multi-nodes cluster. Default load balancer must be disable with `--disable=servicelb` server argument to install replacement solutions. Production configuration highly depends on execution environment. On-premise, a metal-bare load balancer should be deployed and configure to load balanced charges in layer 3 mode (or BGP mode). [MetalLB](https://metallb.universe.tf/concepts/bgp/) and [OpenELB](https://openelb.io/docs/) are suitable solutions for this purpose. On cloud-hosted environment, default cloud controller manager must be disabled with `--disable-cloud-controller` to install dedicated cloud controller. A cloud kubernetes distribution as [GKE](https://cloud.google.com/kubernetes-engine/docs?hl=fr) is a lot simpler for this purpose.
 
