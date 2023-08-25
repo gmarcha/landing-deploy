@@ -48,15 +48,9 @@ Flux kustomize and helm controllers are in charge to reconcile flux kustomize an
 ### `/provision` directory
 
 - Contains terraform HCL resources to provision cloud infrastructure from GCP provider.
-<<<<<<< HEAD
   - `gcp-instance/main.tf` declares HCL resources,
   - `gcp-instance/variables.tf` declares and defines default values for variables used in resources,
   - `gcp-instance/terraform.tfvars.sample` overrides variable values.
-=======
-  - `main.tf` declares a network, a subnetwork, a static ip address, a virtual machine and some firewall rules,
-  - `variables.tf` declares and defines default values for variables used in resources,
-  - `terraform.tfvars.sample` overrides variable values.
->>>>>>> 8e9dc7657c4c83de2c3c33ad4655fa72b89ea6f6
 
 ### `/config` directory
 

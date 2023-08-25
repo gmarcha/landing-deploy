@@ -29,4 +29,5 @@ override.tf.json
 # example: *tfplan*
 
 credentials/**/*
+!credentials/**/README.md
 config.yaml
