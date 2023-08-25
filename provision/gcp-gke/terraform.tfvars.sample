@@ -1,0 +1,7 @@
+project             = "project-id"
+credentials_file    = "../credentials/credentials.json"
+name                = "demo-gke"
+repository_user     = "gmarcha"
+repository_password = "password"
+repository_host     = "github.com"
+repository_name     = "gmarcha/landing-deploy"

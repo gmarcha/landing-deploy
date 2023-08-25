@@ -18,15 +18,15 @@ An infrastructure deployment with Terraform, Ansible and self-deployed Kubernete
 
 ## Usage
 
-- Configure `/provision/terraform.tfvars.sample` and rename file to `/provision/terraform.tfvars`.
+- Configure `/provision/gcp-instance/terraform.tfvars.sample` and rename file to `/provision/gcp-instance/terraform.tfvars`.
   - Create a service account key with `roles/compute.admin`[^5] permission in GCP,
   - Download key in json format and store it in `/provision/credentials/credentials.json`[^6].
   - Set project ID (from json credentials), project name and repository credentials.
 
-- Configure `/config.yaml.sample` and rename file to `/config.yaml` (default values work for public repositories).
+- Configure `/provision/config.yaml.sample` and rename file to `/provision/config.yaml` (default values work for public repositories).
 
 - Run `terraform`:
-  - `cd provision/`,
+  - `cd provision/gcp-instance/`,
   - `terraform init` to initialize current directory with Terraform,
   - `terraform plan` to check resource creation in a non-destructive way (dry-run),
   - `terraform apply` to create cloud resources (require validation).
@@ -44,9 +44,9 @@ Flux kustomize and helm controllers are in charge to reconcile flux kustomize an
 ### `/provision` directory
 
 - Contains terraform HCL resources to provision cloud infrastructure from GCP provider.
-  - `main.tf` declares HCL resources,
-  - `variables.tf` declares and defines default values for variables used in resources,
-  - `terraform.tfvars.sample` overrides variable values.
+  - `gcp-instance/main.tf` declares HCL resources,
+  - `gcp-instance/variables.tf` declares and defines default values for variables used in resources,
+  - `gcp-instance/terraform.tfvars.sample` overrides variable values.
 
 ### `/config` directory
 

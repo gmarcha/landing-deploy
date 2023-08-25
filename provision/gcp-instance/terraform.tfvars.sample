@@ -1,5 +1,5 @@
 project             = "project-id"
-credentials_file    = "credentials/credentials.json"
+credentials_file    = "../credentials/credentials.json"
 name                = "demo"
 repository_user     = "gmarcha"
 repository_password = "password"
