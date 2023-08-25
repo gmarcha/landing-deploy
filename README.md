@@ -17,7 +17,7 @@ An infrastructure deployment with Terraform, Ansible and self-deployed Kubernete
 
 - `terraform`[^1],
 - `ansible`[^2],
-- `gcloud`[^3],
+- `gcloud`[^3] and `gke-gcloud-auth-plugin`[^3],
 - `kubectl`[^4] (optional).
 
 ## Usage
@@ -156,7 +156,7 @@ FluxCD is a Kubernetes GitOps tool which ensures continuous deployment of applic
 
 [^1]: [install terraform](https://developer.hashicorp.com/terraform/downloads) cli.
 [^2]: [install ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html) suite.
-[^3]: [install gcloud](https://cloud.google.com/sdk/docs/install) cli.
+[^3]: [install gcloud](https://cloud.google.com/sdk/docs/install) cli and [install gke-gcloud-auth-plugin](https://cloud.google.com/sdk/docs/install#rpm).
 [^4]: [install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) cli.
 [^5]: see Compute Engine [documentation](https://cloud.google.com/compute/docs/access/iam) for roles (follow least privilege principle in production environment).
 [^6]: see Terraform [documentation](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/google-cloud-platform-build#set-up-gcp) and GCP [documentation](https://cloud.google.com/iam/docs/keys-create-delete).
