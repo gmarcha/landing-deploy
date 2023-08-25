@@ -6,8 +6,12 @@ An infrastructure deployment with Terraform, Ansible and self-deployed Kubernete
 [![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)](https://developer.hashicorp.com/terraform)
 [![Ansible](https://img.shields.io/badge/ansible-%23cc0607.svg?style=for-the-badge&logo=ansible&logoColor=white)](https://docs.ansible.com/)
 [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/docs/home/)
-[![K3s](https://img.shields.io/badge/k3s-%23323330.svg?style=for-the-badge&logo=k3s&logoColor=%23ffc71c)](https://docs.k3s.io/)
 [![FluxCD](https://img.shields.io/badge/FluxCD-%23316ce4.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://fluxcd.io/flux/)
+[![Helm](https://img.shields.io/badge/helm-%23267a9e.svg?style=for-the-badge&logo=helm&logoColor=white)](https://helm.sh/docs/)
+
+## Example
+
+[![Infrastructure diagram](.github/assets/gcp-vm.png)](https://github.com/gmarcha/landing-deploy)
 
 ## Requirements
 
@@ -35,18 +39,24 @@ An infrastructure deployment with Terraform, Ansible and self-deployed Kubernete
 
 Repository is structured into three parts: a `/provision` directory for cloud-infrastructure provisioning with Terraform, a `/config` directory for configuration management with Ansible and `/deploy` directory for application configuration with Kubernetes.
 
-Cloud infrastructure is provisioned with Terraform on Google Cloud Platform. Infrastructure is made up of a network and a subnetwork, some firewall rules, a static ipv4 address and a virtual machine. Virtual machine is based on a boot disk contaning a Rocky Linux 9 image (optimized for GCP) and a network interface linked to static ipv4 address. Firewall rules are applied as tags to the virtual machine to allow external access. This virtual machine is a server node used as a bootstrap node, so configuration is using a `google_compute_instance` rather than a `google_compute_region_instance_group_manager`. Subsequent server and agent nodes could use a regional managed instance groups (MIG)[^7] to benefit from autoscaling and self-healing abilities. However MIG are more complex to setup because they require a cloud load balancer to work properly. GCP load balancers are based on `google_compute_backend_service`, `google_compute_url_map`, `google_compute_target_<protocol>_proxy` and `google_compute_global_forwarding_rule` resources.
+Cloud infrastructure is provisioned with Terraform on Google Cloud Platform. Virtual machine image is based on Rocky Linux 9 optimized for GCP[^7]. This virtual machine will be a kubernetes control plane node used as a bootstrap node for etcd distributed storage, so configuration is using a `google_compute_instance` rather than a `google_compute_region_instance_group_manager`. Subsequent server and agent nodes could use a regional managed instance groups (MIG)[^8] to benefit from autoscaling and self-healing abilities. However MIG are more complex to setup because they require a cloud load balancer to work properly. GCP load balancers are based on `google_compute_backend_service`, `google_compute_url_map`, `google_compute_target_<protocol>_proxy` and `google_compute_global_forwarding_rule` resources.
 
 Provisioned virtual machine is then configured with ansible in pull mode. While ansible default push mode is very straightforward for self-managed on-premise resources, this is very inefficient to configure virtual machine replicas managed by a cloud provider auto-scaler. Thus ansible can be used in pull mode with `ansible-pull` command. Virtual machines run a script provided through metadata to install ansible dependencies, run ansible-pull command to pull a remote repository (actually this repository) which contains a playbook and then execute it locally. This playbook executes roles to install fluxcd cli binary, k3s binary, configure and start k3s service, run flux bootstrap routine and provision kubernetes secrets. K3s configuration is based on node mode, i.e. primary, server or agent node.
 
-Flux kustomize and helm controllers are in charge to reconcile flux kustomize and helm kubernetes custom resources. Flux bootstrap reconciled a kustomization in `/deploy/clusters/production` which itself reconciles `/deploy/infrastructure/controllers`, `/deploy/infrastructure/configs` and `/deploy/apps/production`. This configuration embraces GitOps practices, permitting to use continuous deployment and to apply rolling upgrade automatically. Infrastructure configuration is common among clusters and it lives on this repository. Application configurations on the other hand come from other public or private git repositories or helm charts. This repository pattern is flexible to follow operational requirements and ensure separation of concerns.
+Flux kustomize and helm controllers are in charge to reconcile flux kustomize and helm kubernetes custom resources. Flux bootstrap reconciles a kustomization in `/deploy/clusters/production` which itself reconciles `/deploy/infrastructure/controllers`, `/deploy/infrastructure/configs` and `/deploy/apps/production`. This configuration embraces GitOps practices, permitting to use continuous deployment and to apply rolling upgrade automatically. Infrastructure configuration is common among clusters and it lives on this repository. Application configurations on the other hand come from other public or private git repositories or helm charts. This repository pattern is flexible to follow operational requirements and ensure separation of concerns.
 
 ### `/provision` directory
 
 - Contains terraform HCL resources to provision cloud infrastructure from GCP provider.
+<<<<<<< HEAD
   - `gcp-instance/main.tf` declares HCL resources,
   - `gcp-instance/variables.tf` declares and defines default values for variables used in resources,
   - `gcp-instance/terraform.tfvars.sample` overrides variable values.
+=======
+  - `main.tf` declares a network, a subnetwork, a static ip address, a virtual machine and some firewall rules,
+  - `variables.tf` declares and defines default values for variables used in resources,
+  - `terraform.tfvars.sample` overrides variable values.
+>>>>>>> 8e9dc7657c4c83de2c3c33ad4655fa72b89ea6f6
 
 ### `/config` directory
 
@@ -68,7 +78,7 @@ Flux kustomize and helm controllers are in charge to reconcile flux kustomize an
 
 ### Scale k3s from single-node cluster to multi-node cluster
 
-Single-node k3s cluster are production ready but load balancing should be configured properly at each system level to ensure good quality of service for multi-nodes cluster.
+Single-node k3s cluster are production ready but load balancing should be configured properly at each system level to ensure good quality of service for multi-nodes cluster (thus achieving true high-availability).
 
 K3s is shipped with an internal load balancer implementation. It is perfectly suitable for single-node usage but it should be avoided for multi-nodes cluster. Default load balancer must be disable with `--disable=servicelb` server argument to install replacement solutions. Production configuration highly depends on execution environment. On-premise, a metal-bare load balancer should be deployed and configure to load balanced charges in layer 3 mode (or BGP mode). [MetalLB](https://metallb.universe.tf/concepts/bgp/) and [OpenELB](https://openelb.io/docs/) are suitable solutions for this purpose. On cloud-hosted environment, default cloud controller manager must be disabled with `--disable-cloud-controller` to install dedicated cloud controller. A cloud kubernetes distribution as [GKE](https://cloud.google.com/kubernetes-engine/docs?hl=fr) is a lot simpler for this purpose.
 
@@ -80,7 +90,7 @@ Sealed-secrets and SOPS aim to introduce GitOps practices to secret themselves a
 
 Using encrypted secrets in repositories allows to embrace Git workflows for secret management. Developers encrypts secrets client-side and push them to a repository. Then it can be validated by a cluster administrator and finally be pushed to a production branch. Rotation is ensured through git workflows. No need for a dedicated secret manager anymore. Yet it requires continuous integration automation to avoid secret sprawl. On the other hand, a secret manager represents a configuration and management overhead but it allows to centralize secrets in one place and thus avoid sprawl.
 
-Sealed-secrets is a lightweight solution useful to solve "chicken or the egg" problems. But it lacks rotating capabilities so it is not suitable to handle multiple secrets without customization. SOPS solution is very useful for simple cases especially in utilization with FluxCD. Integration with kustomize secretGenerator makes it very simple to use. External secrets should be used with a custom controller to roll workloads upgrade on secret changes. Complex requirements can be satisfied by a combination of external-secrets with sealed-secrets: encrypting multiple secret managers credentials with sealed secrets for external secrets usage, ensure a GitOps approach with github workflows for externally managed secrets for example.
+Sealed-secrets is a lightweight solution useful to solve "chicken or the egg" problems. But it lacks rotating capabilities so it is not suitable to handle multiple secrets without customization. SOPS solution is very useful for simple cases especially in utilization with FluxCD. Integration with kustomize secretGenerator makes it very simple to use. External secrets should be used with a custom controller to roll workloads upgrade on secret changes. Complex requirements can be satisfied by a combination of external-secrets with sealed-secrets: encrypting multiple secret managers credentials with sealed-secrets for external-secrets usage, ensuring a GitOps approach to use github/gitlab workflows for externally managed secrets.
 
 ## Toolchain
 
@@ -140,7 +150,7 @@ FluxCD is a Kubernetes GitOps tool which ensures continuous deployment of applic
 ## Roadmap
 
 - Add managed instance group (MIG) for server nodes and agent nodes.
-- Interactive UI to configure repository (Terraform and Ansible configuration files).
+- Interactive CLI to configure repository (Terraform and Ansible configuration files).
 
 ## Author
 
@@ -156,4 +166,5 @@ FluxCD is a Kubernetes GitOps tool which ensures continuous deployment of applic
 [^4]: [install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) cli.
 [^5]: see Compute Engine [documentation](https://cloud.google.com/compute/docs/access/iam) for roles (follow least privilege principle in production environment).
 [^6]: see Terraform [documentation](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/google-cloud-platform-build#set-up-gcp) and GCP [documentation](https://cloud.google.com/iam/docs/keys-create-delete).
-[^7]: see Google Cloud [documentation](https://cloud.google.com/compute/docs/instance-groups/creating-groups-of-managed-instances).
+[^7]: see blog [article](https://cloud.google.com/blog/products/application-modernization/introducing-rocky-linux-optimized-for-google-cloud).
+[^8]: see Google Cloud [documentation](https://cloud.google.com/compute/docs/instance-groups/creating-groups-of-managed-instances).
